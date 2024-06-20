@@ -1,0 +1,81 @@
+/* CartItem.module.css */
+.item_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: none;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.item_container:hover {
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.item_title_container {
+  display: flex;
+  width: max-content;
+  margin-right: 60px;
+}
+
+.item_title {
+  font-size: 18px;
+  font-weight: normal;
+  color: #222;
+}
+
+.item_image_container {
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-right: 60px;
+}
+
+.item_image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  transition: transform 0.2s ease-in-out;
+}
+
+.item_image:hover {
+  transform: scale(1.1);
+}
+
+.quantity_control {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+.quantity_tag {
+  width: max-content;
+}
+.add_button {
+  background-color: orangered;
+}
+.minus_button {
+  background-color: orangered;
+}
+.remove_button {
+  background-color: orangered;
+}
+.price_container {
+  margin-right: 40px;
+  margin-left: 30px;
+}
+.total_price_container {
+  margin-right: 30px;
+  margin-left: 30px;
+}
+.check_container {
+  margin-left: 8%;
+}
+
+.check {
+  width: 20px;
+}

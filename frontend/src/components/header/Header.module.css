@@ -1,0 +1,119 @@
+.header_container {
+  display: flex;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+}
+.content_row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 40px;
+}
+
+.choose_button {
+  width: 99px;
+  height: 48px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e0e0e0;
+  border-radius: 8px;
+  padding-top: 8px;
+}
+.choose_label {
+  margin-left: 15px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #828282;
+  line-height: 150%;
+}
+
+.search_area {
+  position: relative;
+}
+
+.search_result_box {
+  position: absolute; /* Position results absolutely */
+  top: 100%; /* Position directly below the search input */
+  left: 0;
+  width: 100%;
+  max-height: 300px; /* Set max height for overflow control */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  background-color: white; /* Set background to ensure visibility */
+  border: 1px solid #e0e0e0; /* Optional: add border for better visibility */
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+.book_item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Add some margin if needed */
+}
+
+.homepage_nav {
+  margin-top: 5px;
+}
+.homepage_label {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #ff6347;
+  line-height: 150%;
+}
+
+.profile_nav {
+  margin-top: 5px;
+}
+.profile_label {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #ff6347;
+  line-height: 150%;
+}
+
+.cart_nav {
+  margin-top: 5px;
+}
+.cart_label {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #ff6347;
+  line-height: 150%;
+}
+
+.order_nav {
+  margin-top: 5px;
+}
+.order_label {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #ff6347;
+  line-height: 150%;
+}
+.login_button {
+  display: flex;
+  background-color: #ff6347;
+  width: 126px;
+  height: 40px;
+  border-radius: 8px;
+  align-items: center;
+}
+.login_label {
+  margin-left: 24px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 150%;
+}
+.book_item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Add some margin if needed */
+}
+.search_box {
+  width: 10;
+}

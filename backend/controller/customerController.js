@@ -1,15 +1,18 @@
 const jwt = require('../service/jwtService')
 const customer = require('../models/customer')
+const book = require('../models/book')
 const admins = require('../models/admins')
 const { checkAdmins } = require('../service/authenticationService')
+// const config = require('config');
+// const dateFormat = require('dateformat');
 
 
 const getAll = async (req, res) => {
     try {
         const customers = await customer.find()
         res.json(customers)
-    } catch (err) {
-        console.error(err)
+    } catch (error) {
+        console.error(error)
         res.status(500).json({ message: 'Server Error' })
     }
 }
@@ -64,7 +67,7 @@ const logIn = async (req, res) => {
                         sameSite: 'strict',
                         path: '/',
                     })
-                    res.json({ message: 'Login successful',existingCustomer, customerId: existingCustomer._id, accessToken, refreshToken })
+                    res.json({ message: 'Login successful', existingCustomer, customerId: existingCustomer._id, accessToken, refreshToken })
                 }
             } else if (existingAdmin) {
                 if (existingAdmin.password !== password) {
@@ -80,7 +83,7 @@ const logIn = async (req, res) => {
                         sameSite: 'strict',
                         path: '/',
                     })
-                    res.json({ message: 'Login successful',existingAdmin, customerId: existingAdmin._id, accessToken, refreshToken })
+                    res.json({ message: 'Login successful', existingAdmin, customerId: existingAdmin._id, accessToken, refreshToken })
                 }
             }
         }
@@ -99,9 +102,9 @@ const logOut = async (req, res) => {
     }
 }
 const updateCustomer = async (req, res) => {
-    const customerID = req.params.id
-    const updateField = req.body
     try {
+        const customerID = req.params.id
+        const updateField = req.body
         const existingCustomer = await customer.readById(customerID)
         if (!existingCustomer) {
             return res.status(400).json({ message: 'Customer not found' })
@@ -157,23 +160,81 @@ const getCustomerCart = async (req, res) => {
         res.status(500).json({ message: 'Server Error' })
     }
 }
+const addToCart = async (req, res) => {
+    try {
+        const customerID = req.params.id
+        const newCart = req.body
+        const data = newCart.cart
+        oldCart = await customer.readById(customerID)
+        if (oldCart.cart == null) {
+            await customer.findByIdAndUpdate(customerID, newCart)
+        } else {
+            await customer.addCart(customerID, data)
+        }
+        const newCustomerCart = await customer.readById(customerID)
+        res.status(200).json({ message: 'Updated successfully', newCart: newCustomerCart.cart })
+    } catch (error) {
+        console.error('Error updatting cart:', error)
+        res.status(500).json({ message: 'Server Error' })
+    }
+}
 const getCustomerOrder = async (req, res) => {
     try {
         const customerId = req.params.id
         const customerOrder = await customer.readById(customerId)
         res.json(customerOrder.order)
     } catch (error) {
-        console.error('Error getting cart:', error)
+        console.error('Error getting order:', error)
         res.status(500).json({ message: 'Server Error' })
     }
 }
+const addToOrder = async (req, res) => {
+    try {
+        const customerID = req.params.id
+        const newOrder = req.body
+        const data = newOrder.order
+        let updatingCustomer = await customer.readById(customerID)
+        if (updatingCustomer.order == null) {
+            await customer.findByIdAndUpdate(customerID, newOrder)
+        } else {
+            await customer.addOrder(customerID, data)
+        }
+        updatingCustomer = await customer.readById(customerID)
+        data.forEach(async (order) => {
+            let currentBook = await book.readById(order.bookid)
+            let num = currentBook.quantity
+            num = num - order.quantity
+            currentBook.quantity = num
+            await currentBook.save()
+        })
+        res.status(200).json({ message: 'Updated successfully', newOrder: updatingCustomer.order })
+    } catch (error) {
+        console.error('Error updatting order:', error)
+        res.status(500).json({ message: 'Server Error' })
+    }
+}
+const getAllOrder = async (req, res) => {
+    try {
+        const customers = await customer.find({});
+        let allOrders = [];
+
+        customers.forEach(customer => {
+            allOrders = allOrders.concat(customer.orders);
+        });
+        res.status(200).json({ message: 'Get all orders successfully', Order: allOrders })
+    } catch (error) {
+        console.error('Error fetching orders:', error)
+        res.status(500).json({ message: 'Server Error' })
+    }
+
+}
 const refreshToken = async (req, res) => {
     try {
-        let token = req.headers.token.split(' ')[0]
+        const token = req.cookies.refreshToken
         if (!token) {
             res.status(200).json({ message: 'The token is required' })
         } else {
-            const refreshing = await refreshToken(token)
+            const refreshing = await jwt.refreshToken(token)
             res.status(200).json(refreshing)
         }
     } catch (error) {
@@ -181,6 +242,7 @@ const refreshToken = async (req, res) => {
         res.status(500).json({ message: 'Server Error' })
     }
 }
+
 module.exports = {
     getAll,
     signUp,
@@ -190,6 +252,9 @@ module.exports = {
     deleteCustomer,
     getCustomerDetails,
     getCustomerCart,
+    addToCart,
     getCustomerOrder,
+    addToOrder,
+    getAllOrder,
     refreshToken
 }

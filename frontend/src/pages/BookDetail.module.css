@@ -1,0 +1,128 @@
+.page_container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.page_content {
+  flex: 1;
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.book {
+  display: flex;
+  margin-bottom: 40px;
+  padding: 20px;
+  border: 1px solid #e7e7e7;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.main_img {
+  max-width: 300px;
+  max-height: 400px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.bookdetail {
+  display: flex;
+  flex-direction: row;
+  gap: 65%;
+}
+.main_detail {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+}
+.price_control {
+  width: max-content;
+}
+
+.quantity_control {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 38px;
+}
+.quantity {
+  width: max-content;
+}
+.setQuantity_button {
+  background-color: rgb(238, 72, 0);
+}
+
+.cart {
+  margin-bottom: 10px;
+  width: 200px;
+  background-color: orangered;
+}
+.buy {
+  width: 200px;
+  background-color: orangered;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  width: max-content;
+}
+
+.author_name,
+.genre_name {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.author_name p,
+.genre_name p {
+  margin-right: 10px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.price {
+  text-align: center;
+  font-size: 20px;
+  color: #b12704;
+}
+
+.rate_price {
+  display: flex;
+  align-items: center;
+}
+
+.rating,
+.sold {
+  margin-right: 20px;
+  font-size: 16px;
+}
+
+.comment_section,
+.your_comment {
+  margin-top: 40px;
+}
+
+.comment_section span,
+.your_comment span {
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.button[disabled] {
+  background-color: #e7e7e7;
+  color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.error_message {
+  color: red;
+  margin-top: 10px;
+}

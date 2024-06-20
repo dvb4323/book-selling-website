@@ -1,91 +1,153 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
-import pageLogo from "../../images/logos/One_Piece_Anime_Logo.png";
-import userIcon from "../../images/icons/user.png";
-import searchIcon from "../../images/icons/search.png";
-import "./header.css";
+import header from "./Header.module.css";
+import axios from "axios";
+import { logoutAsync } from "../../redux/features/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [iconPosition, setIconPosition] = useState({ x: 0, y: 0 });
+  const dispatch = useDispatch();
+  const login = useSelector((state) => state.user.login);
+  async function dangxuat() {
+    dispatch(logoutAsync());
+    const rep = await axios.post("/api/customers/logout");
+    alert("Đăng xuất thành công");
+  }
 
-  const handleMenuEnter = (event) => {
-    setIsMenuOpen(true);
-    const iconRect = event.target.getBoundingClientRect();
-    setIconPosition({ x: iconRect.left, y: iconRect.bottom });
+  const data = useRef([]);
+  const [result, setResult] = useState([]);
+  const search = async (searchTerm) => {
+    try {
+      const response = await axios.get(
+        `/api/books/searchbook?searchterm=${encodeURI(searchTerm)}`
+      );
+      data.current = response.data;
+      setResult(data.current);
+    } catch (error) {
+      console.error("Error searching for books:", error);
+    }
   };
 
-  const handleMenuLeave = () => {
-    setIsMenuOpen(false);
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
   };
 
-  const handleMenuHover = () => {
-    setIsMenuOpen(true);
-  };
+  const debouncedSearch = useMemo(() => debounce(search, 300), [search]); // Memoize the debounced search function
 
-  const handleMenuHoverLeave = () => {
-    setIsMenuOpen(false);
+  const handleSearchChange = (e) => {
+    // Include the 'e' parameter here
+    const searchTerm = e.target.value;
+    if (searchTerm != "") {
+      debouncedSearch(searchTerm);
+    } else {
+      data.current = [];
+      setResult(data.current);
+    }
+    // Call the debounced search function with the current search term
   };
 
   return (
-    <div className="header-wrapper">
-      <div className="header_container">
-        <div id="nav_bar">
-          <ul>
-            <li>
-              <Link to="/">
-                <img className="logo" src={pageLogo} alt="Website Logo" />
-              </Link>
-            </li>
-            <li>
-              <div className="search-box">
-                <input type="text" placeholder="Tam Quoc Dien Nghia" />
-                <button className="search-button">
-                  <img className="search-icon" src={searchIcon} alt="Search" />
-                </button>
-              </div>
-            </li>
-            <li>
-              <Link to="/cart">Giỏ hàng</Link>
-            </li>
-            <li>
-              <Link to="/order">Đơn hàng</Link>
-            </li>
-            <li>
-              <Link to="">Liên hệ</Link>
-            </li>
-            <li>
-              <div
-                onMouseEnter={handleMenuEnter}
-                onMouseLeave={handleMenuLeave}
-                className="user-icon-wrapper"
-              >
-                <img src={userIcon} id="userIcon" className="icon" alt="User" />
-              </div>
-            </li>
-          </ul>
+    <div className={header.header_container}>
+      <div className={header.content_row}>
+        <form className={header.search_area}>
+          <input
+            style={{ width: "500px", padding: "10px" }}
+            type="text"
+            placeholder="Nhập tên sách bạn muốn tìm kiếm"
+            onChange={(e) => {
+              if (e.target.value.length < 2) {
+                // Set data.current to an empty array if the input value becomes empty
+                data.current = [];
+                setResult(data.current);
+                console.log(
+                  "dayla input ",
+                  e.target.value,
+                  "dodai: ",
+                  e.target.value.length
+                );
+              } else {
+                handleSearchChange(e);
+              }
+              // Call handleSearchChange function if needed
+            }} // Call handleSearchChange on input change
+            aria-label="Tìm kiếm sách"
+            autoComplete="off" // Disable autocomplete to prevent browser suggestions interfering with search
+            // onBlur={() => {
+            //   data.current = [];
+            //   setResult(data.current);
+            // }} // Clear the data array when the input field loses focus
+          />
+          {/* Check if data.current has items before rendering */}
+
+          {result && (
+            <div
+              // style={{ backgroundColor: "white" }}
+              className={header.search_result_box}
+            >
+              {result.map((item) => (
+                <div key={item._id} className={header.book_item}>
+                  <Link
+                    to={{
+                      pathname: `/bookdetail/${item._id}`,
+                    }}
+                  >
+                    <img
+                      src={`../images/${item._id}.jpeg`}
+                      width={70}
+                      height={70}
+                      alt={item.title}
+                    />
+                  </Link>
+                  <p>{item.title}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </form>
+        <div className={header.homepage_nav}>
+          <Link to="/">
+            <span className={header.homepage_label}>BK BoSto</span>
+          </Link>
+        </div>
+        <div className={header.homepage_nav}>
+          <Link to="/book">
+            <span className={header.homepage_label}>Sản phẩm</span>
+          </Link>
+        </div>
+        <div className={header.profile_nav}>
+          <Link to="/customer_info">
+            <span className={header.profile_label}>Hồ sơ</span>
+          </Link>
+        </div>
+        <div className={header.cart_nav}>
+          <Link to="/cart">
+            <span className={header.cart_label}>Giỏ hàng</span>
+          </Link>
+        </div>
+        <div className={header.order_nav}>
+          <Link to="/order">
+            <span className={header.order_label}>Đơn hàng</span>
+          </Link>
+        </div>
+        <div className={header.login_button}>
+          {!login && (
+            <Link to="/Login">
+              <span className={header.login_label}>Đăng nhập</span>
+            </Link>
+          )}
+          {login && (
+            <span className={header.login_label} onClick={dangxuat}>
+              Đăng xuất
+            </span>
+          )}
         </div>
       </div>
-      {isMenuOpen && (
-        <div
-          className="dropdown-menu"
-          style={{ top: iconPosition.y, left: iconPosition.x }}
-          onMouseEnter={handleMenuHover}
-          onMouseLeave={handleMenuHoverLeave}
-        >
-          <ul>
-            <li>
-              <Link to="/customer_info">Hồ sơ</Link>
-            </li>
-            <li>
-              <Link to="/Login">Đăng nhập</Link>
-            </li>
-            <li>
-              <Link to="/link2">Đăng xuất</Link>
-            </li>
-          </ul>
-        </div>
-      )}
     </div>
   );
 }
